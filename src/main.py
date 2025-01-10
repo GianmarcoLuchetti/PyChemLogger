@@ -1,18 +1,8 @@
-import serial
-import time
+import utils
 
-f = open('data.csv', 'w', newline='')
-f.truncate()
-
-# Establish a serial connection with the Arduino
+# Establish a serial connection with the Arduino and reset it
 # Specify the correct port and baud rate (e.g. 9600)
-serialCom = serial.Serial('/dev/cu.usbmodem2101', 9600)
-
-# Reset the Arduino to ensure a fresh start
-serialCom.setDTR(False)
-time.sleep(1)
-serialCom.flushInput()
-serialCom.setDTR(True)
+serialCom = utils.set_arduino('/dev/cu.usbmodem2101', 9600)
 
 # Loop to continuously read data from the serial port
 while True:
@@ -22,6 +12,8 @@ while True:
         # Decode the received bytes to a UTF-8
         decoded_bytes = s_bytes.decode("utf-8".strip('\r\n'))
 
-        print(decoded_bytes)
+        # Create a dictionary to store the recorded values
+        dict = utils.values_dict(decoded_bytes)
+        print(dict)
     except:
         print("ERROR. Line was not recorded \r\n")
