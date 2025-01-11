@@ -1,19 +1,73 @@
 import utils
+import pandas as pd
 
-# Establish a serial connection with the Arduino and reset it
-# Specify the correct port and baud rate (e.g. 9600)
-serialCom = utils.set_arduino('/dev/cu.usbmodem2101', 9600)
 
-# Loop to continuously read data from the serial port
-while True:
+def main(serialcom, data_dict):
+    """
+    Main function to continuously read, decode, and process sensor data.
+
+    This function performs the following tasks:
+    1. Continuously reads data from the serial communication interface.
+    2. Decodes the received data into a UTF-8 string.
+    3. Updates the provided dictionary with the new sensor readings (time, temperature, pH).
+    4. Prints the formatted output of the readings with two decimal places.
+    5. Handles errors gracefully:
+        - `ValueError` for data conversion issues.
+        - `KeyboardInterrupt` to allow the user to safely terminate the program.
+    6. Converts the updated dictionary into a Pandas DataFrame at the end for further analysis or export.
+
+    Args:
+        serialcom (serial.Serial): The serial communication object for interfacing with the sensor.
+        data_dict (dict): A dictionary with keys corresponding to the sensor parameters
+                          (e.g., 'Time (s)', 'Temperature (C)', 'pH') and values as lists
+                          to store the respective data.
+
+    Returns:
+        pandas.DataFrame: A DataFrame containing the collected sensor data with columns
+                          for 'Time (s)', 'Temperature (C)', and 'pH'.
+    """
     try:
-        # Read encoded data
-        s_bytes = serialCom.readline()
-        # Decode the received bytes to a UTF-8
-        decoded_bytes = s_bytes.decode("utf-8".strip('\r\n'))
+        while True:
+            try:
+                # Decode the received bytes from the serial port into a UTF-8 string
+                decoded_bytes = utils.decoder(serialcom)
+                data_dict = utils.values_dict(decoded_bytes, data_dict)
 
-        # Create a dictionary to store the recorded values
-        dict = utils.values_dict(decoded_bytes)
-        print(dict)
-    except:
-        print("ERROR. Line was not recorded \r\n")
+                data = decoded_bytes.split(',')
+                # Print the formatted output of the current readings
+                print(
+                    f'Time: {float(data[0]):.2f} s, Temperature: {float(data[1]):.2f} C, pH: {float(data[2]):.2f} \r\n')
+
+            except ValueError as ve:
+                print(f"ERROR: {ve}. Data not collected. \r\n")
+
+    except KeyboardInterrupt:
+        # Handle user interruption and clean up resources
+        utils.keyboard_interrupt_handler()
+
+    finally:
+        # Ensure the serial connection is closed on exit
+        serialcom.close()
+        print("############ Serial connection closed. ############ \r\n")
+
+    # Convert the collected data dictionary into a Pandas DataFrame for analysis
+    df = pd.DataFrame(data_dict)
+
+    # Return the DataFrame for further processing or saving
+    return df
+
+
+if __name__ == '__main__':
+    # Establish a serial connection with the sensor
+    # Replace with the appropriate port and baud rate for your setup
+    serialCom = utils.set_sensor('/dev/cu.usbmodem101', 9600)
+
+    # Initialize the data dictionary with predefined keys for storing sensor readings
+    data_dict = {
+        'Time (s)': [],
+        'Temperature (C)': [],
+        'pH': []
+    }
+
+    df = main(serialCom, data_dict)
+    print (df)

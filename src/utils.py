@@ -1,7 +1,7 @@
 import serial
 import time
 
-def set_arduino(port, baudrate):
+def set_sensor(port, baudrate):
     """
     Initializes and sets up the Arduino connection.
 
@@ -20,46 +20,70 @@ def set_arduino(port, baudrate):
         serial.Serial: The initialized serial connection object.
     """
     # Establish a serial connection with the Arduino
-    serialCom = serial.Serial(port=port, baudrate=baudrate)
+    serialcom = serial.Serial(port=port, baudrate=baudrate)
 
     # Reset the Arduino to ensure a fresh start
-    serialCom.setDTR(False)
+    serialcom.setDTR(False)
     time.sleep(1)
-    serialCom.flushInput()
-    serialCom.setDTR(True)
+    serialcom.flushInput()
+    serialcom.setDTR(True)
 
     # Log message
-    print('Sensor ready: \r\n')
+    print('################## Sensor ready ##################')
+    print('####### Interrupt the process to save data ####### \r\n')
 
-    return serialCom
+    return serialcom
 
 
-def values_dict(values):
+def decoder(serialcom, encoding='utf-8'):
     """
-    Processes a single line of input and appends the values to the corresponding keys.
+        Reads and decodes data from a serial communication interface.
+
+        This function reads a line of encoded data from the specified serial communication object,
+        decodes it using the specified encoding, and removes any trailing newline or carriage return characters.
+
+        Args:
+            serialcom (serial.Serial): A serial communication object used to read data.
+            encoding (str, optional): The character encoding used to decode the data. Defaults to 'utf-8'.
+
+        Returns:
+            str: The decoded string with trailing newline and carriage return characters stripped.
+        """
+
+    # Read encoded data
+    s_bytes = serialcom.readline()
+    # Decode the received bytes to a UTF-8
+    decoded_bytes = s_bytes.decode(encoding.strip('\r\n'))
+
+    return decoded_bytes
+
+
+def values_dict(values, data_dict):
+    """
+    Processes a single line of input and appends the values to the corresponding keys in the input dictionary.
 
     Args:
-        values (str): A single string containing comma-separated values in the format:
-                      "time,temperature,pH".
+        values (str): A string containing comma-separated values corresponding to the keys in the dictionary.
+                      Example: "time,temperature,pH".
+        data_dict (dict): A dictionary where keys are parameter names (e.g., 'Time (s)', 'Temperature (C)', 'pH'),
+                          and values are lists to store the corresponding data.
 
     Returns:
-        dict: A dictionary with keys 'Time (s)', 'Temperature (C)', and 'pH',
-              where each key contains a list with the corresponding values converted to floats.
+        dict: The updated dictionary with the new values appended to the appropriate keys.
     """
     # Split the input string into a list of values using commas as the delimiter
     values = values.split(',')
 
-    # Initialize the dictionary with predefined keys and empty lists as values
-    data_dict = {
-        'Time (s)': [],
-        'Temperature (C)': [],
-        'pH': []
-    }
+    if len(values) != len(data_dict):
+        raise Exception('The dictionary must have an entry for each data record')
 
-    # Append the corresponding values to the dictionary keys
-    data_dict['Time (s)'].append(float(values[0]))
-    data_dict['Temperature (C)'].append(float(values[1]))
-    data_dict['pH'].append(float(values[2]))
+    # Append values to the keys in the dictionary
+    for key, value in zip(data_dict.keys(), values):
+        data_dict[key].append(float(value))
 
-    # Return the populated dictionary
+    # Return populated dictionary
     return data_dict
+
+
+def keyboard_interrupt_handler():
+    print("################# Recording ended #################")
