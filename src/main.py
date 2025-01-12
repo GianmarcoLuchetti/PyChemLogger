@@ -29,14 +29,17 @@ def main(serialcom, data_dict):
     try:
         while True:
             try:
-                # Decode the received bytes from the serial port into a UTF-8 string
-                decoded_bytes = utils.decoder(serialcom)
-                data_dict = utils.values_dict(decoded_bytes, data_dict)
+                # Update the data dictionary with new values
+                data_dict = utils.values_dict(serialcom, data_dict)
 
-                data = decoded_bytes.split(',')
+                time = data_dict['Time (s)'][-1]
+                temp = data_dict['Temperature (C)'][-1]
+                pH = data_dict['pH'][-1]
+
                 # Print the formatted output of the current readings
                 print(
-                    f'Time: {float(data[0]):.2f} s, Temperature: {float(data[1]):.2f} C, pH: {float(data[2]):.2f} \r\n')
+                    f'Time: {time:.2f} s, Temperature: {temp:.2f} C, pH: {pH:.2f} \r\n'
+                )
 
             except ValueError as ve:
                 print(f"ERROR: {ve}. Data not collected. \r\n")

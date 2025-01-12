@@ -58,30 +58,38 @@ def decoder(serialcom, encoding='utf-8'):
     return decoded_bytes
 
 
-def values_dict(values, data_dict):
+def values_dict(serialcom, data_dict):
     """
-    Processes a single line of input and appends the values to the corresponding keys in the input dictionary.
+    Processes a single line of input from the serial communication interface and updates the provided dictionary.
+
+    This function:
+    1. Reads and decodes a single line of input from the serial communication interface.
+    2. Splits the decoded string into individual values.
+    3. Appends the values to the corresponding keys in the input dictionary.
 
     Args:
-        values (str): A string containing comma-separated values corresponding to the keys in the dictionary.
-                      Example: "time,temperature,pH".
+        serialcom (serial.Serial): The serial communication object used to read the sensor data.
         data_dict (dict): A dictionary where keys are parameter names (e.g., 'Time (s)', 'Temperature (C)', 'pH'),
                           and values are lists to store the corresponding data.
 
     Returns:
         dict: The updated dictionary with the new values appended to the appropriate keys.
-    """
-    # Split the input string into a list of values using commas as the delimiter
-    values = values.split(',')
 
+    Raises:
+        Exception: If the number of values in the decoded string does not match the number of keys in the dictionary.
+    """
+
+    decoded_values = decoder(serialcom) # Decode the received bytes into a UTF-8 string
+
+    values = decoded_values.split(',') # Split the decoded string into individual values
+
+    # Validate that the number of values matches the number of dictionary keys
     if len(values) != len(data_dict):
         raise Exception('The dictionary must have an entry for each data record')
 
-    # Append values to the keys in the dictionary
-    for key, value in zip(data_dict.keys(), values):
+    for key, value in zip(data_dict.keys(), values): # Append each value to its corresponding key in the dictionary
         data_dict[key].append(float(value))
 
-    # Return populated dictionary
     return data_dict
 
 
