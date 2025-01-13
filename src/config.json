@@ -1,0 +1,17 @@
+{
+  "sensor": {
+    "port": "/dev/cu.usbmodem101",
+    "baudrate": 9600
+  },
+
+  "data_dict": {
+    "Time (s)": [],
+    "Temperature (C)": [],
+    "pH": []
+  },
+
+  "query": {
+    "main_table_create": "CREATE TABLE IF NOT EXISTS reactions (ID INTEGER PRIMARY KEY AUTOINCREMENT, Date DATE, Time_s FLOAT, Average_pH FLOAT, Average_Temperature_C FLOAT)",
+    "main_table_insert": "INSERT INTO reactions (Date, Time_s, Average_pH, Average_Temperature_C) VALUES (:Date, :Time_s, :Average_pH, :Average_Temperature_C)"
+  }
+}

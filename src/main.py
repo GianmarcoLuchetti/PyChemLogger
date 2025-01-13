@@ -2,7 +2,10 @@ import utils
 import pandas as pd
 import datetime
 import notebook
-from src.notebook import main_db
+import json
+
+with open('config.json', 'r') as f:
+    config = json.load(f)
 
 
 def main(serialcom, data_dict):
@@ -74,14 +77,10 @@ def main(serialcom, data_dict):
 if __name__ == '__main__':
     # Establish a serial connection with the sensor
     # Replace with the appropriate port and baud rate for your setup
-    serialCom = utils.set_sensor('/dev/cu.usbmodem101', 9600)
+    serialCom = utils.set_sensor(config['sensor']['port'], config['sensor']['baudrate'])
 
     # Initialize the data dictionary with predefined keys for storing sensor readings
-    data_dict = {
-        'Time (s)': [],
-        'Temperature (C)': [],
-        'pH': []
-    }
+    data_dict = config['data_dict']
 
     df = main(serialCom, data_dict)
     print(df)
