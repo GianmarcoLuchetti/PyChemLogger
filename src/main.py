@@ -1,5 +1,8 @@
 import utils
 import pandas as pd
+import datetime
+import notebook
+from src.notebook import main_db
 
 
 def main(serialcom, data_dict):
@@ -56,6 +59,14 @@ def main(serialcom, data_dict):
     # Convert the collected data dictionary into a Pandas DataFrame for analysis
     df = pd.DataFrame(data_dict)
 
+    react_info = {
+        'Date': datetime.datetime.now().date(),
+        'Time_s': df['Time (s)'].iloc[-1],
+        'Average_pH': df['pH'].mean(),
+        'Average_Temperature_C': df['Temperature (C)'].mean()
+    }
+    main_db = notebook.main_db(react_info)
+
     # Return the DataFrame for further processing or saving
     return df
 
@@ -73,4 +84,4 @@ if __name__ == '__main__':
     }
 
     df = main(serialCom, data_dict)
-    print (df)
+    print(df)
