@@ -1,5 +1,9 @@
 import serial
 import time
+import json
+
+with open("config.json", "r") as f:
+    config = json.load(f)
 
 def set_sensor(port, baudrate):
     """
@@ -95,3 +99,28 @@ def values_dict(serialcom, data_dict):
 
 def keyboard_interrupt_handler():
     print("################# Recording ended #################")
+
+
+def stat(data_list):
+    """
+    Compute statistics for a given list of numbers.
+
+    Args:
+        data_list (list): List of numerical values.
+
+    Returns:
+        tuple: A tuple containing the following statistics rounded to 4 decimal places:
+            - Minimum value
+            - Maximum value
+            - Average (mean)
+            - Standard deviation
+    """
+    min_val = min(data_list)
+    max_val = max(data_list)
+
+    avg = sum(data_list) / len(data_list)
+    variance = sum([(x - avg) ** 2 for x in data_list]) / len(data_list)
+    std = variance ** 0.5
+
+    # Round to 4 decimal places
+    return round(min_val, 4), round(max_val, 4), round(avg, 4), round(std, 4)

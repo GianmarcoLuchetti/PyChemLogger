@@ -7,7 +7,6 @@ import json
 with open('config.json', 'r') as f:
     config = json.load(f)
 
-
 def main(serialcom, data_dict):
     """
     Main function to continuously read, decode, and process sensor data.
@@ -38,8 +37,8 @@ def main(serialcom, data_dict):
                 # Update the data dictionary with new values
                 data_dict = utils.values_dict(serialcom, data_dict)
 
-                time = data_dict['Time (s)'][-1]
-                temp = data_dict['Temperature (C)'][-1]
+                time = data_dict['Time_s'][-1]
+                temp = data_dict['Temperature_C'][-1]
                 pH = data_dict['pH'][-1]
 
                 # Print the formatted output of the current readings
@@ -59,19 +58,23 @@ def main(serialcom, data_dict):
         serialcom.close()
         print("############ Serial connection closed. ############ \r\n")
 
-    # Convert the collected data dictionary into a Pandas DataFrame for analysis
-    df = pd.DataFrame(data_dict)
+    ph_stat = utils.stat(data_dict['pH'])
+    temp_stat = utils.stat(data_dict['Temperature_C'])
 
     react_info = {
         'Date': datetime.datetime.now().date(),
-        'Time_s': df['Time (s)'].iloc[-1],
-        'Average_pH': df['pH'].mean(),
-        'Average_Temperature_C': df['Temperature (C)'].mean()
+        'Time_s': data_dict['Time_s'][-1],
+        'Min_pH': ph_stat[0],
+        'Max_pH': ph_stat[1],
+        'Average_pH': ph_stat[2],
+        'Std_pH': ph_stat[3],
+        'Min_Temperature_C': temp_stat[0],
+        'Max_Temperature_C': temp_stat[1],
+        'Average_Temperature_C': temp_stat[2],
+        'Std_Temperature_C': temp_stat[3]
     }
-    main_db = notebook.main_db(react_info)
-
-    # Return the DataFrame for further processing or saving
-    return df
+    reaction_id = notebook.main_db(react_info)
+    notebook.sub_table(reaction_id, data_dict)
 
 
 if __name__ == '__main__':
@@ -79,8 +82,4 @@ if __name__ == '__main__':
     # Replace with the appropriate port and baud rate for your setup
     serialCom = utils.set_sensor(config['sensor']['port'], config['sensor']['baudrate'])
 
-    # Initialize the data dictionary with predefined keys for storing sensor readings
-    data_dict = config['data_dict']
-
-    df = main(serialCom, data_dict)
-    print(df)
+    main(serialCom, config['data_dict'])
