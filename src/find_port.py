@@ -1,7 +1,8 @@
-# List all available serial ports
 from serial.tools import list_ports
 
-ports = list_ports.comports()
+def find_port():
+    ports = list_ports.comports()
+    for port in ports:
+        print(port)
 
-for port in ports:
-    print(port)
+find_port()
