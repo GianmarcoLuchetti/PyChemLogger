@@ -5,9 +5,6 @@ import json
 with open('config.json', 'r') as f:
     config = json.load(f)
 
-import datetime
-import utils
-
 def main():
     """
     Main function to read, process, and store sensor data.
@@ -50,8 +47,8 @@ def main():
                 print(f"ERROR: {ve}. Data not collected. \r\n")
 
     except KeyboardInterrupt:
-        # Graceful termination by the user
-        utils.keyboard_interrupt_handler()
+        # Termination by the user
+        print("################# Recording ended #################")
 
     finally:
         # Ensure the serial connection is closed

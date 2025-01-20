@@ -116,10 +116,6 @@ def values_dict(serialcom, data_dict):
     return data_dict
 
 
-def keyboard_interrupt_handler():
-    print("################# Recording ended #################")
-
-
 def stat(data_list):
     """
     Compute basic statistics for a list of numerical values.
