@@ -1,4 +1,5 @@
 import utils
+import seaborn as sns
 import datetime
 import json
 
@@ -9,18 +10,16 @@ def main():
     """
     Main function to read, process, and store sensor data.
 
-    Tasks:
+    This function:
     1. Continuously reads data from the serial communication interface.
-    2. Decodes and updates the sensor readings in a dictionary.
-    3. Prints formatted readings with two decimal places.
-    4. Handles:
+    2. Updates a dictionary with real-time sensor readings.
+    3. Plots real-time temperature and pH data.
+    4. Prints formatted readings with two decimal places.
+    5. Handles errors gracefully:
         - `ValueError`: Issues with data conversion.
         - `KeyboardInterrupt`: Graceful termination by the user.
-    5. Calculates statistics (min, max, average, std deviation) for pH and temperature.
-    6. Stores reaction summary in the main database and detailed readings in a sub-table.
-
-    Args:
-        None
+    6. Computes statistics for pH and temperature.
+    7. Saves a summary in the main database and detailed data in a sub-table.
 
     Returns:
         None
@@ -29,31 +28,39 @@ def main():
     serialcom = utils.set_sensor(config['sensor']['port'], config['sensor']['baudrate'])
     data_dict = config['data_dict']
 
+    # Set up plots for real-time data visualization
+    sns.set_theme(style="darkgrid")
+    fig, ax = utils.rt_plot(num_charts=2)
+
     try:
         while True:
             try:
-                # Update the data dictionary with new sensor readings
+                # Update the dictionary with new sensor readings
                 data_dict = utils.values_dict(serialcom, data_dict)
 
-                # Extract the latest readings
                 time = data_dict['Time_s'][-1]
                 temp = data_dict['Temperature_C'][-1]
                 pH = data_dict['pH'][-1]
 
-                # Print formatted readings
-                print(f"Time: {time:.2f} s, Temperature: {temp:.2f} C, pH: {pH:.2f} \r\n")
+                # Print readings formatted to two decimal places
+                print(f"Time: {time:.2f} s, Temperature: {temp:.2f} C, pH: {pH:.2f}\r\n")
+
+                # Update the real-time plots
+                utils.rt_plotting(ax[0], data_dict, 'Temperature_C')
+                utils.rt_plotting(ax[1], data_dict, 'pH')
 
             except ValueError as ve:
-                print(f"ERROR: {ve}. Data not collected. \r\n")
+                # Handle data conversion errors
+                print(f"ERROR: {ve}. Data not collected.\r\n")
 
     except KeyboardInterrupt:
-        # Termination by the user
+        # Handle user interruption
         print("################# Recording ended #################")
 
     finally:
         # Ensure the serial connection is closed
         serialcom.close()
-        print("############ Serial connection closed. ############ \r\n")
+        print("############ Serial connection closed. ############\r\n")
 
     # Compute statistics for pH and temperature
     ph_stat = utils.stat(data_dict['pH'])
@@ -72,14 +79,16 @@ def main():
         'Average_Temperature_C': temp_stat[2],
         'Std_Temperature_C': temp_stat[3],
         'Data_points': len(data_dict['Time_s']),
-        'Time_interval_s': int(data_dict['Time_s'][-1]/len(data_dict['Time_s']))
+        'Time_interval_s': int(data_dict['Time_s'][-1] / len(data_dict['Time_s']))
     }
 
-    # Save reaction summary to the main database and detailed readings to a sub-table
+    # Save the reaction summary and detailed readings to the database
     reaction_id = utils.main_table(react_info)
     utils.sub_table(reaction_id, data_dict)
 
+    # Display the final plots
+    utils.plot()
+
 
 if __name__ == '__main__':
-    # Execute the main function
     main()

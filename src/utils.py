@@ -2,6 +2,7 @@ import serial
 import time
 import json
 import sqlite3
+import matplotlib.pyplot as plt
 
 with open("config.json", "r") as f:
     config = json.load(f)
@@ -115,7 +116,7 @@ def values_dict(serialcom, data_dict):
 
     return data_dict
 
-
+# TODO: insert median
 def stat(data_list):
     """
     Compute basic statistics for a list of numerical values.
@@ -274,3 +275,78 @@ def sub_table(reaction_id, data_dict):
         connection.commit()
 
     print(f"##### Inserted {len(rows)} rows into table {reaction_table_name} ##### \r\n")
+
+
+def rt_plot(num_charts=1):
+    """
+    Creates an interactive figure with the specified number of subplots.
+
+    Args:
+        num_charts (int): Number of subplots (axes) to create in the figure.
+                          Defaults to 1.
+
+    Returns:
+        fig (matplotlib.figure.Figure): The created figure object.
+        axes (list[matplotlib.axes.Axes]): A list of axes objects for subplots.
+    """
+    plt.ion()  # Interactive mode
+
+    # Determine figure height based on the number of subplots
+    fig_height = max(4, num_charts * 3)  # Minimum height is 4, scaled by num_charts
+    fig, axes = plt.subplots(num_charts, 1, figsize=(10, fig_height), constrained_layout=True)
+
+    # Ensure axes is always a list for consistency
+    if num_charts == 1:
+        axes = [axes]
+
+    return fig, axes
+
+
+def rt_plotting(ax, data_dict, key):
+    """
+    Updates the specified axes with new data for real-time plotting.
+
+    Args:
+        ax (matplotlib.axes.Axes): The axes object to update.
+        data_dict (dict): A dictionary containing the data to plot.
+                          Must include 'Time_s' as the x-values and the specified `key` as y-values.
+        key (str): The key in `data_dict` to use for the y-values.
+
+    Example:
+        $$$ data = {
+        ...         'Time_s': [0.1, 0.2, 0.3],
+        ...         'Temperature_C': [25.0, 25.1, 25.2]
+        ... }
+        $$$ rt_plotting(ax, data, 'Temperature_C')
+    """
+    # Extract x and y values from the data dictionary
+    x_vals = data_dict['Time_s']
+    y_vals = data_dict[key]
+
+    ax.clear()
+    ax.plot(
+        x_vals,
+        y_vals,
+        marker='o',
+        linestyle='-',
+        label=f"{key} Data"
+    )
+
+    ax.set_title(f"{key} vs Time", fontsize=14)
+    ax.set_xlabel('Time (s)', fontsize=12)
+    ax.set_ylabel(key, fontsize=12)
+    ax.legend(fontsize=10, loc="upper left", frameon=True, shadow=True)
+    ax.grid(True, linestyle='--', alpha=0.6)
+
+    plt.pause(0.1)  # Pause to update the plot in interactive mode
+
+
+def plot():
+    """
+    Displays the plots in blocking mode (non-interactive).
+
+    This function disables interactive mode and displays the current figures,
+    waiting for the user to close them before proceeding.
+    """
+    plt.ioff()  # Disable interactive mode
+    plt.show()
