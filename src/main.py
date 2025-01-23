@@ -74,10 +74,12 @@ def main():
         'Max_pH': ph_stat[1],
         'Average_pH': ph_stat[2],
         'Std_pH': ph_stat[3],
+        'Median_pH': ph_stat[4],
         'Min_Temperature_C': temp_stat[0],
         'Max_Temperature_C': temp_stat[1],
         'Average_Temperature_C': temp_stat[2],
         'Std_Temperature_C': temp_stat[3],
+        'Median_Temperature_C': temp_stat[4],
         'Data_points': len(data_dict['Time_s']),
         'Time_interval_s': int(data_dict['Time_s'][-1] / len(data_dict['Time_s']))
     }
@@ -91,4 +93,16 @@ def main():
 
 
 if __name__ == '__main__':
+
+    print("""
+    ···········································································
+    : ____         ____ _                    _                                :
+    :|  _ \ _   _ / ___| |__   ___ _ __ ___ | |    ___   __ _  __ _  ___ _ __ :
+    :| |_) | | | | |   | '_ \ / _ \ '_ ` _ \| |   / _ \ / _` |/ _` |/ _ \ '__|:
+    :|  __/| |_| | |___| | | |  __/ | | | | | |__| (_) | (_| | (_| |  __/ |   :
+    :|_|    \__, |\____|_| |_|\___|_| |_| |_|_____\___/ \__, |\__, |\___|_|   :
+    :       |___/                                       |___/ |___/           :
+    ···········································································
+    """)
+
     main()

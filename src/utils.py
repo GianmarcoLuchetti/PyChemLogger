@@ -3,6 +3,7 @@ import time
 import json
 import sqlite3
 import matplotlib.pyplot as plt
+import statistics
 
 with open("config.json", "r") as f:
     config = json.load(f)
@@ -116,7 +117,7 @@ def values_dict(serialcom, data_dict):
 
     return data_dict
 
-# TODO: insert median
+
 def stat(data_list):
     """
     Compute basic statistics for a list of numerical values.
@@ -147,15 +148,16 @@ def stat(data_list):
     min_val = min(data_list)
     max_val = max(data_list)
 
-    # Compute the average (mean)
+    # Compute the average
     avg = sum(data_list) / len(data_list)
+    median = statistics.median(data_list)
 
     # Compute the variance and the standard deviation
     variance = sum((x - avg) ** 2 for x in data_list) / len(data_list)
     std = variance ** 0.5
 
     # Return all statistics rounded to 4 decimal places
-    return round(min_val, 4), round(max_val, 4), round(avg, 4), round(std, 4)
+    return round(min_val, 4), round(max_val, 4), round(avg, 4), round(std, 4), round(median, 4)
 
 
 def main_table(data_dict):
