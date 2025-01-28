@@ -197,8 +197,8 @@ def main_table(data_dict):
     """
 
     # Retrieve SQL queries for creating the table and inserting data
-    create_query = config['query']['main_table_create']
-    insert_query = config['query']['main_table_insert']
+    create_query = config['main_table_query']['create']
+    insert_query = config['main_table_query']['insert']
 
     # Connect to the database using a context manager for automatic resource handling
     with sqlite3.connect('PyChemLogger.db') as connection:
@@ -250,7 +250,7 @@ def sub_table(reaction_id, data_dict):
     reaction_table_name = f"reaction_{reaction_id}"
 
     # Retrieve and format the SQL query for creating the sub-table
-    create_query = config['query']['sub_table_create'].replace("{reaction_table_name}", reaction_table_name)
+    create_query = config['sub_table_query']['create'].replace("{reaction_table_name}", reaction_table_name)
 
     # Prepare the data rows for insertion
     rows = [
@@ -261,7 +261,7 @@ def sub_table(reaction_id, data_dict):
     ]
 
     # Retrieve and format the SQL query for inserting rows into the sub-table
-    insert_query = config['query']['sub_table_insert'].replace("{reaction_table_name}", reaction_table_name)
+    insert_query = config['sub_table_query']['insert'].replace("{reaction_table_name}", reaction_table_name)
 
     # Use a context manager to handle the database connection
     with sqlite3.connect('PyChemLogger.db') as connection:
