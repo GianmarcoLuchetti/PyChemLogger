@@ -65,8 +65,8 @@ PyChemLogger/
 
 2. Update `src/config.json`:
 
-   - Set the correct **serial port** (e.g., `/dev/cu.usbmodem101` or `COM3`).
-   - Set the correct **baud rate** (default `9600`)
+   - Set the correct **port** (e.g., `/dev/cu.usbmodem101` or `COM3`).
+   - Set the correct **baud rate** (default `9600`).
 
 3. Run the data logger:
 

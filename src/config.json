@@ -1,6 +1,6 @@
 {
   "sensor": {
-    "port": "/dev/cu.usbmodem101",
+    "port": "",
     "baudrate": 9600,
     "comment": "Contains the configuration for the sensor, including the port it connects to and the baud rate for communication (run find_port.py to find this information)."
   },
@@ -14,7 +14,7 @@
   "main_table_query": {
     "create": "CREATE TABLE IF NOT EXISTS reactions (ID INTEGER PRIMARY KEY AUTOINCREMENT, Date DATE, Time_s FLOAT, Min_pH FLOAT, Max_pH FLOAT, Average_pH FLOAT, Std_pH FLOAT, Median_pH FLOAT, Min_Temperature_C FLOAT, Max_Temperature_C FLOAT, Average_Temperature_C FLOAT, Std_Temperature_C FLOAT, Median_Temperature_C FLOAT, Data_points INTEGER, Time_interval_s INTEGER)",
     "insert": "INSERT INTO reactions (Date, Time_s, Min_pH, Max_pH, Average_pH, Std_pH, Median_pH, Min_Temperature_C, Max_Temperature_C, Average_Temperature_C, Std_Temperature_C, Median_Temperature_C, Data_points, Time_interval_s) VALUES (:Date, :Time_s, :Min_pH, :Max_pH, :Average_pH, :Std_pH, :Median_pH, :Min_Temperature_C, :Max_Temperature_C, :Average_Temperature_C, :Std_Temperature_C, :Median_Temperature_C, :Data_points, :Time_interval_s)",
-    "comment": "Defines the schema for the main table ‘reactions’, which stores summary statistics and reaction metadata. N.B. The ‘insert’ keys must match the ‘create’ keys."
+    "comment": "Defines the scheme for the main table ‘reactions’, which stores summary statistics and reaction metadata. N.B. The ‘insert’ keys must match the ‘create’ keys."
   },
 
   "sub_table_query": {
