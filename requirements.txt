@@ -1,0 +1,4 @@
+seaborn~=0.13.2
+serial~=0.0.97
+pyserial~=3.5
+matplotlib~=3.10.0
