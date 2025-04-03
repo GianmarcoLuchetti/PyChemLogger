@@ -1,6 +1,6 @@
 # PyChemLogger
 
-A Python-based real-time chemical data logger and analyzer.\
+A Python-based real-time chemical data logger and analyzer.
 
 This tool collects, visualizes, and stores sensor data (pH and temperature) from chemical reactions, providing live plotting and automatic database storage.
 
