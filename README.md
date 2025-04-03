@@ -1,6 +1,6 @@
 # PyChemLogger
 
-A Python-based real-time chemical data logger and analyzer.\
+A Python-based real-time chemical data logger and analyzer.
 
 This tool collects, visualizes, and stores sensor data (pH and temperature) from chemical reactions, providing live plotting and automatic database storage.
 
@@ -17,20 +17,20 @@ This tool collects, visualizes, and stores sensor data (pH and temperature) from
 
 ---
 
-## 📂 Project Structure
+## 🗂️ Project Structure
 
 ```
 PyChemLogger/
-├── src/                    # Source code folder
-│   ├── main.py             # Main script to run the logger
-│   ├── utils.py            # Utility functions for data reading, plotting, and DB management
-│   ├── find_port.py        # Script to list available serial ports
-│   └── config.json         # Configuration file (port, baudrate, SQL queries)
 ├── Sensor Circuit/         # Circuit details folder
-│   ├── ph_temp_sensor.ino  # Arduino sensor code
-│   └── Circuit.png         # Circuit design
-├── requirements.txt        # Libraries required to be installed
-└── README.md               # Project documentation
+│   ├── Circuit.png         # Circuit design
+│   └── ph_temp_sensor.ino  # Arduino sensor code
+├── src/                    # Source code folder
+│   ├── config.json         # Configuration file (port, baudrate, SQL queries)
+│   ├── find_port.py        # Script to list available serial ports
+│   ├── main.py             # Main script to run the logger
+│   └── utils.py            # Utility functions for data reading, statistics, plotting, and DB management
+├── README.md               # Project documentation
+└── requirements.txt        # Libraries required to be installed
 ```
 
 ---
